@@ -124,11 +124,7 @@ int gpioRun(gpioSetup* setup)
 	int status	= EXIT_SUCCESS;
 	FastGpio	* gpioObj;
 		// object setup
-	if (strcmp(DEVICE_TYPE, "ramips") == 0) {
-		gpioObj = new FastGpioOmega2();
-	} else {
-		gpioObj = new FastGpioOmega();
-	}
+	gpioObj = new FastGpioOmega2();
 	char* 		valString = new char[255];
 	// Modify here to point to Omega or Omega2 Object. 
 	// object setup
