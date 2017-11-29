@@ -28,7 +28,7 @@ void initGpioSetup (gpioSetup* obj)
 void usage(const char* progName) {
 	printf("Edited by Shivansh Vij for RCTiming\n");
 	printf("Usage:\n");
-	printf("RCTiming <gpio to read from>\n");
+	printf("RCTiming <gpio to read from> <gpio to read from>\n");
 	printf("\n");
 }
 
@@ -144,6 +144,44 @@ int checkOldProcess(gpioSetup *setup)
 	return EXIT_SUCCESS;
 }
 
+
+long RCTimer(gpioSetup* setup, int PIN){
+		long result = 0;
+		int status = 0;
+		//Set pin to output
+		setup->cmd 		= GPIO_CMD_SET_DIRECTION;
+		setup->pinDir 	= 1;
+		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_SET_DIR);
+		setup->pinNumber = PIN;
+		status = gpioRun(setup);
+
+		usleep(500);
+
+		//Set pin to high output
+		setup->cmd 		= GPIO_CMD_SET;
+		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_SET);
+		setup->pinValue = 1;
+		status = gpioRun(setup);
+
+		usleep(500);
+
+		//Set pin to input
+		setup->cmd 		= GPIO_CMD_SET_DIRECTION;
+		setup->pinDir 	= 0;
+		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_SET_DIR);
+		status = gpioRun(setup);
+
+		usleep(500);
+
+		//Read the RCTime value
+		setup->cmd 		= GPIO_CMD_READ;
+		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_READ);
+		while(gpioRun(setup)){
+			result++;
+		}
+		return result;
+}
+
 int main(int argc, char* argv[])
 {
 	int 		status;
@@ -174,48 +212,14 @@ int main(int argc, char* argv[])
 	// check for any pwm processes already running on this pin
 	status = checkOldProcess(setup);
 	while(true){
-		if(status == EXIT_FAILURE){
-			break;
-		}
-		long result = 0;
+		cout << "| FINGER |\t| RESISTANCE VALUE |\t"
 
-		//Set pin to output
-		setup->cmd 		= GPIO_CMD_SET_DIRECTION;
-		setup->pinDir 	= 1;
-		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_SET_DIR);
-		setup->pinNumber = atoi(argv[1]);
-		status = gpioRun(setup);
-
-		usleep(500);
-
-		//Set pin to high output
-		setup->cmd 		= GPIO_CMD_SET;
-		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_SET);
-		setup->pinValue = 1;
-		status = gpioRun(setup);
-
-		usleep(500);
-
-		//Set pin to input
-		setup->cmd 		= GPIO_CMD_SET_DIRECTION;
-		setup->pinDir 	= 0;
-		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_SET_DIR);
-		status = gpioRun(setup);
-
-		usleep(500);
-
-		//Read the RCTime value
-		setup->cmd 		= GPIO_CMD_READ;
-		strcpy(setup->cmdString, FASTGPIO_CMD_STRING_READ);
-		while(gpioRun(setup)){
-			result++;
-		}
 		printf("Value: ");
-		cout << result;
+
+
+		cout << RCTimer(setup, atoi(argv[1]));
 		printf("\n");
-
-
-		usleep(1000*1000);
+		usleep(1000*50);
 	}
 
 	// clean-up

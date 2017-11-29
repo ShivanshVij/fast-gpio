@@ -1,26 +1,10 @@
 # fast-gpio
-Provides access to GPIOs by directly writing to the hw registers, implements sw PWM as well
+Edited version of fast-gpio, provides access to RCTiming via c++ code. Writes directly to hw registers, all other functionality has been removed. 
 
 # usage
 
-    fast-gpio set-input <gpio>
-    fast-gpio set-output <gpio>
-    fast-gpio get-direction <gpio>
-    fast-gpio read <gpio>
-    fast-gpio set <gpio> <value: 0 or 1>
-    fast-gpio pwm <gpio> <freq in Hz> <duty cycle percentage>
-
-## verbose output modes
-
-Verbose flags available:
-
-* **-q** quite output
-* **-v** verbose output
-* **-u** ubus output
-* **-d** debug output
+    fast-gpio <gpio> <gpio>
 
 Examples:
 
-    fast-gpio -q set-input 5
-    fast-gpio -u read 5
-    > {"cmd":"Read", "pin":12, "val":"1"}
+    fast-gpio 19 19 //Lets you read from pin 19
